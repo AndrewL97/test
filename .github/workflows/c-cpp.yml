@@ -21,7 +21,7 @@ jobs:
         repository: aseprite/aseprite
         submodules: recursive
     - name: Build
-    - run:  cd aseprite
+      run:  cd aseprite
             mkdir build
             cd build
             export CC=clang
