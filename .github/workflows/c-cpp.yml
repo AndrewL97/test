@@ -1,0 +1,39 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: AptGet
+      run: sudo apt-get install -y g++ clang libc++-dev libc++abi-dev cmake ninja-build libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev libfontconfig1-dev
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+      with:
+        # Repository name with owner. For example, actions/checkout
+        repository: aseprite/aseprite
+        submodules: recursive
+    - name: Build
+    - run:  cd aseprite
+            mkdir build
+            cd build
+            export CC=clang
+            export CXX=clang++
+            cmake \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_CXX_FLAGS:STRING=-stdlib=libc++ \
+            -DCMAKE_EXE_LINKER_FLAGS:STRING=-stdlib=libc++ \
+            -DLAF_BACKEND=skia \
+            -DSKIA_DIR=$HOME/deps/skia \
+            -DSKIA_LIBRARY_DIR=$HOME/deps/skia/out/Release-x64 \
+            -DSKIA_LIBRARY=$HOME/deps/skia/out/Release-x64/libskia.a \
+            -G Ninja \
+            ..
+            ninja aseprite
